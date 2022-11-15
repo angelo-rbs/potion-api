@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(cuid())
+  name  String
+  tasks Task[]
+}
+
+model Tag {
+  id        String  @id @default(cuid())
+  areaId    String?
+  subAreaId String?
+
+  area    Area?    @relation(fields: [areaId], references: [id])
+  subArea SubArea? @relation(fields: [subAreaId], references: [id])
+  tasks   Task[]
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  name        String
+  createdAt   DateTime  @default(now())
+  concludedAt DateTime?
+  deadline    DateTime?
+  isUrgent    Boolean
+  description String?
+
+  pomodorable       Boolean
+  estimatedSessions Int?
+  doneSessions      Int?
+  closed            Boolean?
+
+  tagId   String
+  ownerId String
+  User    User   @relation(fields: [ownerId], references: [id])
+  tag     Tag    @relation(fields: [tagId], references: [id])
+}
+
+model Area {
+  id   String @id @default(cuid())
+  tags Tag[]
+}
+
+model SubArea {
+  id   String @id @default(cuid())
+  tags Tag[]
+}

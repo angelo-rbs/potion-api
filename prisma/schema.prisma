@@ -43,7 +43,7 @@ model Task {
 
   tagId   String
   ownerId String
-  User    User   @relation(fields: [ownerId], references: [id])
+  user    User   @relation(fields: [ownerId], references: [id])
   tag     Tag    @relation(fields: [tagId], references: [id])
 }
 

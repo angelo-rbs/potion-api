@@ -9,6 +9,8 @@ export const createTaskBody = z.object({
     name:        z.string( requiredAndInvalidPropMessage('name', 'string') ),
     pomodorable: z.boolean( requiredAndInvalidPropMessage('pomodorable', 'bool') ),
     isUrgent:    z.boolean( requiredAndInvalidPropMessage('isUrgent', 'bool') ),
+    ownerId:     z.string( requiredAndInvalidPropMessage('ownerId', 'string')),
+    tagId:       z.string( requiredAndInvalidPropMessage('tagId', 'string')),
 
     // de tipo DateTime
     concludedAt: z.string( invalidTypeMessage('concludedAt', 'string') ).nullable(),

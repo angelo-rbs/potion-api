@@ -29,29 +29,41 @@ async function start() {
 
     // zod faz o schema-validation e tipa as propriedades
 
-    const parsedTaskProps = createTaskBody.parse(req.body)
+    const {
+      name, isUrgent, pomodorable, closed, concludedAt, deadline, description,
+      doneSessions, estimatedSessions, ownerId, tagId 
+    } = createTaskBody.parse(req.body)
 
-    await prisma.task.create({
-      data: {
+    try {
+      await prisma.task.create({
+        data: {
+          name, isUrgent, pomodorable, closed, concludedAt, deadline, description,
+          doneSessions, estimatedSessions,
+          
+          user: {
+            connect: {
+              id: ownerId,
+            }
+          },
+  
+          tag: {
+            connect: {
+              id: tagId,
+            }
+          },  
+        }
+      })
+    } catch (err) {
 
-        User: {
-          connect: {
-            id: "1", // usando um mesmo owner pras tasks criadas enquanto não implemento findById
-          }
-        },
+    }
+    
 
-        tag: {
-          create: {}
-        },
-
-        ...parsedTaskProps
-      }
-    })
-
-    return res.status(201).send({ ...parsedTaskProps })
+    return res.status(201).send({ name, isUrgent, pomodorable, closed, concludedAt, deadline, description,
+                                  doneSessions, estimatedSessions,ownerId, tagId })
+    
   })
 
-  fastify.get('/users')
+  //fastify.get('/users')            // acesso com id dinâmico?
 
   fastify.post('/users', (req, res) => {
 

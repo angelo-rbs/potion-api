@@ -1,9 +1,8 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
-import { z } from 'zod'
 import { PrismaClient } from '@prisma/client'
 
-import { createTaskBody } from './utils/schemaValidation'
+import { createTaskBody, createUserBody, createTagBody } from './utils/schemaValidation'
 
 async function start() {
   const fastify = Fastify({
@@ -30,9 +29,9 @@ async function start() {
     // zod faz o schema-validation e tipa as propriedades
 
     const {
-      name, isUrgent, pomodorable, closed, concludedAt, deadline, description,
-      doneSessions, estimatedSessions, ownerId, tagId 
-    } = createTaskBody.parse(req.body)
+            name, isUrgent, pomodorable, closed, concludedAt, deadline, description,
+            doneSessions, estimatedSessions, ownerId, tagId 
+          } = createTaskBody.parse(req.body)
 
     try {
       await prisma.task.create({
@@ -63,18 +62,40 @@ async function start() {
     
   })
 
-  //fastify.get('/users')            // acesso com id dinâmico?
+  fastify.post('/users', async (req, res) => {
 
-  fastify.post('/users', (req, res) => {
+    const { name, email, password } = createUserBody.parse(req.body)
 
-    const createUserBody = z.object({
-      name: z.string()
+    try {
+      await prisma.user.create({
+        data: {
+          name,
+          email, 
+          password,
+        }
+      })
+    } catch (e) {
+
+    }
+
+    return res.status(201).send({ name, email })
+  })
+
+  fastify.post('/tags', async (req, res) => {
+    
+    const { areaId, subAreaId } = createTagBody.parse(req.body)
+
+    await prisma.tag.create({
+      data: {
+        areaId,
+        subAreaId,
+      }
     })
 
-    const { name } = createUserBody.parse(req.body)
-
-    return res.status(201).send({ name })
+    return res.status(201).send({ areaId, subAreaId })
   })
+
+  
 
   await fastify.listen({ port: 3333 })
 }

@@ -30,3 +30,14 @@ export const createTaskBody = z.object({
     closed:            z.boolean({invalid_type_error: 'closed must be a bool'}).nullable(),
 
 })
+
+export const createUserBody = z.object({
+  name:     z.string( requiredAndInvalidPropMessage('name', 'string')),
+  email:    z.string( requiredAndInvalidPropMessage('email', 'string')),
+  password: z.string( requiredAndInvalidPropMessage('password', 'string')),
+})
+
+export const createTagBody = z.object({
+  areaId:    z.string().nullable(),
+  subAreaId: z.string().nullable()
+})
